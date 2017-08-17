@@ -2,6 +2,7 @@ package ishell
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/flynn-archive/go-shlex"
 )
@@ -25,11 +26,11 @@ func (ic iCompleter) Do(line []rune, pos int) (newLine [][]rune, length int) {
 
 	var cWords []string
 	prefix := ""
-	if len(words) > 0 && line[pos-1] != ' ' {
+	if len(words) > 0 && !unicode.IsSpace(line[pos-1]) {
 		prefix = words[len(words)-1]
-		cWords = ic.getWords(words[:len(words)-1])
+		cWords = ic.getWords(words[:len(words)-1], words[len(words)-1])
 	} else {
-		cWords = ic.getWords(words)
+		cWords = ic.getWords(words, "")
 	}
 
 	var suggestions [][]rune
@@ -44,13 +45,13 @@ func (ic iCompleter) Do(line []rune, pos int) (newLine [][]rune, length int) {
 	return suggestions, len(prefix)
 }
 
-func (ic iCompleter) getWords(w []string) (s []string) {
+func (ic iCompleter) getWords(w []string, current string) (s []string) {
 	cmd, args := ic.cmd.FindCmd(w)
 	if cmd == nil {
 		cmd, args = ic.cmd, w
 	}
 	if cmd.Completer != nil {
-		return cmd.Completer(args)
+		return cmd.Completer(args, current)
 	}
 	for k := range cmd.children {
 		s = append(s, k)

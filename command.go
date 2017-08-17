@@ -24,7 +24,7 @@ type Cmd struct {
 	// By default all commands get autocomplete of
 	// subcommands.
 	// A non-nil Completer overrides the default behaviour.
-	Completer func(args []string) []string
+	Completer func(args []string, current string) []string
 
 	// subcommands.
 	children map[string]*Cmd
