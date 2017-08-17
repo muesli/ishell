@@ -153,7 +153,7 @@ shell:
 
 		if err == io.EOF {
 			if s.eof == nil {
-				fmt.Println("EOF")
+				// fmt.Println("EOF")
 				break
 			}
 			if err := handleEOF(s); err != nil {
